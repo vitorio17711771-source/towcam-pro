@@ -1,4 +1,4 @@
-# TowCam Pro · 1.0.0
+# TowCam Pro · 1.0.1
 
 **Sen sadece çek, gerisini TowCam halletsin.**
 
@@ -15,6 +15,8 @@
 
 **Not:** Kaydet düğmesi bir dosya indirme isteği başlatır; işletim sisteminin Galeri uygulamasına sessizce yazıldığını garanti etmez. Paylaş düğmesi Web Share API dosya desteğini sorgular; destek yoksa indirmeye geçer. Tarayıcı depolama sınırları ve temizleme davranışı cihaz tarafından yönetilir; uygulamada yapay çekim kotası yoktur.
 
+Aynı teşhis ekranındaki **Motor öz testi (sentetik)**, kameraya veya kişisel fotoğrafa dokunmadan motoru, EXIF yönünü, geri alınan yerel arşiv işlemini ve PWA önbellek dosyalarını cihazın gerçek tarayıcısında denetler.
+
 ## Mimari
 
 | Dosya | Görev |
@@ -24,6 +26,7 @@
 | `engine.js` | Saf deterministik piksel analizi ve işlem |
 | `processor.js` | EXIF yönüne göre çözme, 384 px analiz, 384×384 parçalı tam boyutlu çıktı, JPEG/PNG kodlama |
 | `worker.js`, `image-service.js` | Worker + OffscreenCanvas, UI parçalı yedek, hata/bellek durumunda orijinali koruma |
+| `selftest.js` | Gerçek tarayıcıda sentetik motor, EXIF, arşiv rollback ve cache öz testi |
 | `storage.js`, `config.js` | IndexedDB yerel özgün/işlenmiş dosyalar, sayfalı arşiv metaverisi, ayarlar ve sürüm |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Kurulabilir PWA, çevrimdışı uygulama dosyaları, sürüm tabanlı önbellek ve maskeleme ikonu |
 | `_headers` | CSP, Permissions-Policy ve diğer HTTP güvenlik başlıkları |

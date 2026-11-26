@@ -1,7 +1,7 @@
 // Increment this cache identifier whenever any application asset changes.
 // Keep old clients on their own complete snapshot until activation.
-const CACHE='towcam-pro-1.0.0';
-const ASSETS=['./','./index.html','./styles.css','./app.js','./camera.js','./config.js','./engine.js','./processor.js','./worker.js','./image-service.js','./storage.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/maskable-512.png'];
+const CACHE='towcam-pro-1.0.1';
+const ASSETS=['./','./index.html','./styles.css','./app.js','./camera.js','./config.js','./engine.js','./processor.js','./worker.js','./image-service.js','./storage.js','./selftest.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/maskable-512.png'];
 const URLS=new Set(ASSETS.map(a=>new URL(a,self.registration.scope).href));
 self.addEventListener('install',event=>event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);

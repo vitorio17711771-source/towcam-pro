@@ -18,11 +18,11 @@ test('Service Worker bütün uygulama dosyalarını önbellekler; sürüm tutarl
   const sw=read('sw.js'),config=read('config.js');const cache=sw.match(/const CACHE='towcam-pro-([^']+)'/)[1];
   assert.ok(config.includes("'"+cache+"'"));const assets=sw.match(/const ASSETS=(\[[^\n]+\]);/)[1].replaceAll("'",'"');const list=JSON.parse(assets);
   for(const a of list)assert.ok(existsSync(path(a)),a);
-  for(const p of ['app.js','camera.js','config.js','engine.js','processor.js','worker.js','image-service.js','storage.js','styles.css','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/maskable-512.png'])assert.ok(list.includes('./'+p),p);
+  for(const p of ['app.js','camera.js','config.js','engine.js','processor.js','worker.js','image-service.js','storage.js','selftest.js','styles.css','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/maskable-512.png'])assert.ok(list.includes('./'+p),p);
   assert.match(sw,/req.method!=='GET'/);assert.match(sw,/url.origin!==self.location.origin/);
 });
 test('Statik uygulamada dış ağ istemcisi, analitik veya yükleme endpointi yok',()=>{
-  for(const f of ['app.js','camera.js','config.js','engine.js','processor.js','worker.js','image-service.js','storage.js']){
+  for(const f of ['app.js','camera.js','config.js','engine.js','processor.js','worker.js','image-service.js','storage.js','selftest.js']){
     const s=read(f);assert.doesNotMatch(s,/\b(fetch|XMLHttpRequest|WebSocket|sendBeacon)\s*\(/);
     assert.doesNotMatch(s,/https?:\/\//);
   }

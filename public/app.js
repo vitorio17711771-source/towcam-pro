@@ -286,6 +286,13 @@ $('settings').onclick=()=>{diagnostics();$('settingsDialog').showModal();};
 $('closeSettings').onclick=()=>$('settingsDialog').close();
 $('settingsDialog').addEventListener('close',()=>{if(screen==='camera'&&camera.active)acquireWakeLock();});
 $('diagnostics').addEventListener('toggle',()=>{if($('diagnostics').open)diagnostics();});
+$('selfTest').onclick=async()=>{
+  const button=$('selfTest'),out=$('selfTestOutput');if(button.disabled)return;
+  button.disabled=true;out.hidden=false;out.textContent='Sentetik öz test çalışıyor; kamera veya kişisel fotoğraf kullanılmaz.\n';
+  try{const {runSelfTest}=await import('./selftest.js');const result=await runSelfTest(line=>{out.textContent+='\n'+line+'\n';});out.textContent+='\nSONUÇ: '+result.pass+' başarılı, '+result.fail+' başarısız.';}
+  catch(error){out.textContent+='\nÖz test başlatılamadı: '+error.message;}
+  finally{button.disabled=false;}
+};
 $('copyDiag').onclick=async()=>{diagnostics();try{await navigator.clipboard.writeText($('diagText').textContent);toast('Teşhis kopyalandı.');}catch{const range=document.createRange();range.selectNodeContents($('diagText'));getSelection()?.removeAllRanges();getSelection()?.addRange(range);toast('Metin seçildi; kopyalayabilirsin.');}};
 $('gallery').onclick=openGallery;$('resultGallery').onclick=openGallery;
 $('galleryBack').onclick=()=>{if(galleryFrom==='result'&&current)showResult(current);else showScreen('camera');};

@@ -46,3 +46,22 @@ export async function deletePhoto(id){
   const db=await open(),tx=db.transaction(['photos','archive'],'readwrite'),done=txPromise(tx);
   tx.objectStore('photos').delete(id);tx.objectStore('archive').delete(id);await done;
 }
+
+export async function verifyArchiveRollback(blob){
+  const db=await open(),id='diagnostic-'+(globalThis.crypto?.randomUUID?.()||Date.now());
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(['photos','archive'],'readwrite'),p=tx.objectStore('photos'),a=tx.objectStore('archive');
+    let verified=false,photo,meta,n=0;
+    tx.onabort=()=>verified?resolve(true):reject(tx.error||new Error('Yerel arşiv öz testi başarısız.'));
+    tx.onerror=()=>reject(tx.error||new Error('Yerel arşiv öz testi başarısız.'));
+    tx.oncomplete=()=>reject(new Error('Öz test işlemi geri alınamadı.'));
+    const complete=()=>{if(++n===2){verified=photo?.original?.size===blob.size&&photo?.enhanced?.size===blob.size&&meta?.id===id;tx.abort();}};
+    // Both writes and reads use the same transaction. Always abort the
+    // transaction after checks, so no synthetic photo persists.
+    p.put({id,original:blob,enhanced:blob});
+    a.put({id,date:Date.now(),thumbnail:blob,profile:'Diagnostic'});
+    const pr=p.get(id),mr=a.get(id);
+    pr.onsuccess=()=>{photo=pr.result;complete();};
+    mr.onsuccess=()=>{meta=mr.result;complete();};
+  });
+}

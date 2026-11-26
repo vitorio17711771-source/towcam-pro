@@ -20,7 +20,7 @@ const server=createServer(async(req,res)=>{
     const path=resolve(root,'.'+(pathname==='/'?'/index.html':pathname));
     if(!path.startsWith(root)||!(await stat(path)).isFile()){res.writeHead(404);res.end('Not found');return;}
     let content=await readFile(path);
-    if(updated&&pathname==='/sw.js')content=Buffer.from(content.toString().replace('towcam-pro-1.0.0','towcam-pro-1.0.0-test'));
+    if(updated&&pathname==='/sw.js')content=Buffer.from(content.toString().replace('towcam-pro-1.0.1','towcam-pro-1.0.1-test'));
     res.setHeader('Content-Type',mime[extname(path)]||'application/octet-stream');
     res.end(content);
   }catch(e){res.writeHead(404);res.end('Not found');if(!['ENOENT','ENOTDIR'].includes(e.code))serversErrors.push(e.message);}
@@ -135,9 +135,9 @@ await check('PWA manifest, gerçek ikon boyutları, Service Worker önbelleği',
   const info=await page.evaluate(async()=>{
     const m=await(await fetch('/manifest.webmanifest')).json();
     const icons=await Promise.all(m.icons.map(async i=>{const im=new Image();im.src=i.src;await im.decode();return [im.naturalWidth,im.naturalHeight,i.purpose];}));
-    const ks=await caches.keys(),c=await caches.open('towcam-pro-1.0.0');return {m,icons,ks,assets:(await c.keys()).length};
+    const ks=await caches.keys(),c=await caches.open('towcam-pro-1.0.1');return {m,icons,ks,assets:(await c.keys()).length};
   });
-  assert.equal(info.m.display,'standalone');assert.deepEqual(info.icons,[[192,192,'any'],[512,512,'any'],[512,512,'maskable']]);assert.ok(info.assets>=15);assert.ok(info.ks.includes('towcam-pro-1.0.0'));
+  assert.equal(info.m.display,'standalone');assert.deepEqual(info.icons,[[192,192,'any'],[512,512,'any'],[512,512,'maskable']]);assert.ok(info.assets>=15);assert.ok(info.ks.includes('towcam-pro-1.0.1'));
   const cdp=await context.newCDPSession(page);try{measurements.installability=await cdp.send('Page.getInstallabilityErrors');}catch{measurements.installability='CDP bu sürümde raporlamadı';}
 });
 await check('Yeni Service Worker güncellemesi ve önceki cache temizliği',async()=>{
@@ -145,7 +145,7 @@ await check('Yeni Service Worker güncellemesi ve önceki cache temizliği',asyn
   await page.evaluate(async()=>{const reg=await navigator.serviceWorker.getRegistration();await reg.update();});
   await page.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration()).waiting,{}, {timeout:30000});
   await page.locator('#settings').click();await page.locator('#update').waitFor({state:'visible'});await Promise.all([page.waitForNavigation({timeout:30000}),page.locator('#update').click()]);
-  await ready();await page.waitForFunction(async()=>{const keys=await caches.keys();return keys.includes('towcam-pro-1.0.0-test')&&!keys.includes('towcam-pro-1.0.0');},{},{timeout:25000});
+  await ready();await page.waitForFunction(async()=>{const keys=await caches.keys();return keys.includes('towcam-pro-1.0.1-test')&&!keys.includes('towcam-pro-1.0.1');},{},{timeout:25000});
 });
 await check('Çevrimdışı yeniden açılış, kamera, işleme ve arşiv',async()=>{
   await context.setOffline(true);await page.reload();await ready();await capture();assert.match(await page.locator('#resultNotice').innerText(),/yerel arşivde/);await context.setOffline(false);
