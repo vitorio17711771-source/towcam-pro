@@ -1,0 +1,16 @@
+{
+  "name": "towcam-pro",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/engine.test.js tests/camera.test.js tests/assets.test.js",
+    "serve": "python3 -m http.server 8080 --directory public",
+    "test:browser": "node tests/browser.test.js",
+    "test:pipeline": "node --test tests/native-pipeline.test.js"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "@napi-rs/canvas": "0.1.100"
+  }
+}
