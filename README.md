@@ -2,7 +2,7 @@
 
 **Sen sadece çek, gerisini TowCam halletsin.**
 
-Çekici, araç kurtarma ve yol yardım işleri için Türkçe, reklamsız, üyeliksiz, cihaz üzerinde çalışan kamera PWA'sı. Üretim adresi: https://towcam-pro.pages.dev — mevcut Cloudflare Pages projesi, `main` dalı ve `public` çıktı klasörü korunur. Derleme komutu veya sunucu işlevi gerekmez.
+Çekici, araç kurtarma ve yol yardım işleri için Türkçe, reklamsız, üyeliksiz, cihaz üzerinde çalışan kamera PWA'sı. Mevcut yayın (Türkiye'de erişim sorunu bildirildi): https://towcam-pro.pages.dev. Firebase Hosting geçiş yapılandırması hazırdır; yeni üretim adresi henüz doğrulanmamıştır. Mevcut Cloudflare Pages projesi, `main` dalı ve `public` çıktı klasörü korunur. Derleme komutu veya sunucu işlevi gerekmez.
 
 ## Kullanım
 
@@ -59,6 +59,19 @@ npm run serve
 Yerel test sunucusu http://localhost:8080 (loopback güvenli bağlam); gerçek telefon testinde mevcut HTTPS üretim adresini kullan. Playwright test paketi sentetik kamera akışı, izin hatası, simüle donanım kontrolleri, sonuç, indirme, mock dosya paylaşımı, offline çalışma, cache güncellemesi, arşiv yalıtımı ve 12/50 MP işlem senaryolarını içerir. Test amaçlı bağımlılıklar: Playwright (Apache-2.0), @napi-rs/canvas (MIT); statik üretim dizinine dahil değildir. Uygulama ikonları özel olarak çizilmiştir; harici görsel veya font kullanmaz.
 
 Sürüm yayınında `config.js`, `sw.js` cache adı ve `package.json` sürümünü birlikte değiştir; ana dal için üretim dağıtımının yeni sürümü getirdiğini doğrula. Service Worker mevcut açık oturumu bütün bir sürümde tutar, yeni sürüm diğer oturumlar kapandığında doğal olarak devreye girer; kullanıcı Ayarlar'dan güvenle güncelleme isteyebilir.
+
+## Firebase Hosting geçişi (hazırlık)
+
+- Firebase Hosting (classic), Spark plan, yalnızca statik `public` dizini; uygulama kaynakları ve PWA versiyonu değiştirilmez. Firebase SDK, Analytics, Authentication, veritabanı veya ücretli App Hosting gerekmez.
+- `firebase.json`: mevcut CSP, Permissions-Policy ve güvenlik başlıklarını korur; manifest ve Service Worker için MIME / cache ayarları içerir. Cloudflare `_headers` dosyası olduğu gibi kalır.
+- Firebase projesinin default Hosting sitesini oluştur (2026-10-15 sonrasında otomatik oluşturulmayabilir). Benzersiz site/proje kimliği Firebase tarafından onaylanmalıdır.
+- GitHub Actions: `FIREBASE_PROJECT_ID` depo değişkeni ve `FIREBASE_SERVICE_ACCOUNT` şifreli depo secret'ı, yetkili Firebase projesi ile kurulmalıdır. Kimlik bilgilerini kaynak koduna veya sohbet mesajına ekleme. Firebase resmî GitHub entegrasyonu kurulabilir; mevcut workflow ile çakışan ikinci canlı deployment workflow'u oluşturma.
+- `.github/workflows/firebase-hosting-live.yml` yalnızca main dalında, proje değişkeni ayarlandığında, mevcut testler geçerse canlı kanala dağıtır. Proje henüz bağlanmadıysa deploy işi atlanır.
+- Firebase tarafından verilen gerçek HTTPS adreslerini ancak deploy sonrası doğrula: anonim HTTP 200, DNS, TLS, güvenlik başlıkları, manifest, Service Worker, sentetik öz test, çevrimdışı açılış ve Türkiye sabit/mobil bağlantısından erişim. Yeni adres doğrulanmadan Cloudflare dağıtımını silme.
+- Yeni alan adı yeni browser origin'dir: kamera izinleri yeniden istenir; eski IndexedDB arşivi, yerel ayarlar ve PWA kurulumu otomatik taşınmaz. Eski fotoğraflar eski origin'de kalır; erişilebiliyorsa cihazdan dışa aktarılabilir.
+- Spark hosting kotası yalnızca sunucudan statik dosya dağıtımı için geçerlidir; çekim/işleme yerelde kalır. Ücretli plan veya alan adı satın alma.
+- [Firebase Hosting dokümantasyonu](https://firebase.google.com/docs/hosting/)
+- [Firebase GitHub entegrasyonu](https://firebase.google.com/docs/hosting/github-integration)
 
 ## Teknik başvuru
 
